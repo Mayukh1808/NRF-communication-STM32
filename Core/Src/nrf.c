@@ -92,7 +92,54 @@ void init_device(){
 	nrf_reg_single(RF_SETUP, 0x0E); //Power=0db data rate =2mbps
 	nrf_reg_single(RF_SETUP, 0x0E);
 
+	//enabling the chip before configuring the device
+	CE_enable();
+	Cs_select();
+
+
 }
+
+// setting up the txmode
+void enable_txmode(uint8_t *Address, uint8_t *channel){
+	//disabling the chip after configuring the device
+	CE_disable();
+
+	nrf_reg_single(RF_CH, channel);//select the channel
+	nrf_reg_multiple(TX_ADDR, Address, 5);
+
+	//power up the device
+	uint8_t config = read_nrf_reg_single(CONFIG);
+	config = config |(1<<1);
+	nrf_reg_single(CONFIG, config);
+	//enable the chip after configuring the device
+	CE_enable();
+}
+//transmit the data
+uint8_t data_transmit(uint8_t *data){
+	uint8_t cmdtosend = 0;
+	//select the device
+	Cs_select();
+	//payload command
+	cmdtosend = W_TX_PAYLOAD ;
+	HAL_SPI_Transmit(&hspi1, &cmdtosend, 1, 100);
+	//send payload
+	HAL_SPI_Transmit(&hspi1, data, 32, 1000);
+	//unselecting the device
+	Cs_unselect();
+	HAL_Delay(1);
+	uint8_t fifostatus = read_nrf_reg_single(FIFO_STATUS);
+	if((fifostatus&(1<<4))&&(!(fifostatus&(1<<3))))
+	{
+		cmdtosend= FLUSH_TX;
+		sendcmd(cmdtosend);
+		return 1;
+	}
+
+	return 0;
+}
+
+
+
 
 
 

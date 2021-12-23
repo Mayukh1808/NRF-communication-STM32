@@ -22,6 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "nrf.h"
 
 /* USER CODE END Includes */
 
@@ -56,6 +57,8 @@ static void MX_SPI1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+uint8_t TxAddress[] = {0xEE, 0xDD, 0xCC, 0xBB, 0xAA};
+uint8_t TXdata[] = "MyNRF\n";
 
 /* USER CODE END 0 */
 
@@ -89,6 +92,9 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+  init_device();
+  enable_txmode(TxAddress, 10);
+
 
   /* USER CODE END 2 */
 
@@ -99,6 +105,10 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  if(data_transmit(TXdata) == 1){
+		  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+	  }
+	  HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -230,6 +240,7 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
+	  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, 1);
   }
   /* USER CODE END Error_Handler_Debug */
 }

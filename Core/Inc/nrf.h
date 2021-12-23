@@ -8,7 +8,9 @@
 #ifndef INC_NRF_H_
 #define INC_NRF_H_
 
-
+void init_device(void);
+void enable_txmode(uint8_t *Address, uint8_t *channel);
+uint8_t data_transmit(uint8_t *data);
 
 
 /* Memory Map */
