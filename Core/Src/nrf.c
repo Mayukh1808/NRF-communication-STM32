@@ -100,7 +100,7 @@ void init_device(){
 }
 
 // setting up the txmode
-void enable_txmode(uint8_t *Address, uint8_t *channel){
+void enable_txmode(uint8_t *Address, uint8_t channel){
 	//disabling the chip after configuring the device
 	CE_disable();
 
@@ -137,7 +137,51 @@ uint8_t data_transmit(uint8_t *data){
 
 	return 0;
 }
+ void nrf_rxmode(uint8_t *Address, uint8_t channel){
+		//disabling the chip after configuring the device
+		CE_disable();
 
+		nrf_reg_single(RF_CH, channel);//select the channel
+		//slecting the data pipe 1
+		uint8_t en_rxaddr= read_nrf_reg_single(EN_RXADDR);
+	    en_rxaddr =en_rxaddr|(1<<1);
+	    nrf_reg_single(RF_CH, channel);
+		nrf_reg_multiple(RX_ADDR_P1, Address, 5);
+		nrf_reg_single(RX_PW_P1, 32); // 32 bits payload through pipe 1
+		//power up the device
+		uint8_t config = read_nrf_reg_single(CONFIG);
+		config = config |(1<<1);
+		nrf_reg_single(CONFIG, config);
+		//enable the chip after configuring the device
+		CE_enable();
+
+ }
+  uint8_t data_check(int pipenum){
+	  uint8_t status = read_nrf_reg_single(STATUS);
+	  if((status&(1<<6))&& (status&(pipenum<<1))){
+		  nrf_reg_single(STATUS , (1<<6));
+		  return 1;
+	  }
+	  return 0;
+
+  }
+
+  void receive_data(uint8_t *data){
+		uint8_t cmdtosend = 0;
+		//select the device
+		Cs_select();
+		//payload command
+		cmdtosend = R_RX_PAYLOAD ;
+		HAL_SPI_Transmit(&hspi1, &cmdtosend, 1, 100);
+		//send payload
+		HAL_SPI_Receive(&hspi1, data, 32, 1000);
+		//unselecting the device
+		Cs_unselect();
+		HAL_Delay(1);
+		cmdtosend= FLUSH_RX;
+		sendcmd(cmdtosend);
+
+  }
 
 
 

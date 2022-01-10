@@ -10,3 +10,6 @@ nrf.c:73:6:sendcmd	16	static
 nrf.c:82:6:init_device	8	static
 nrf.c:103:6:enable_txmode	24	static
 nrf.c:118:9:data_transmit	24	static
+nrf.c:140:7:nrf_rxmode	24	static
+nrf.c:159:11:data_check	24	static
+nrf.c:169:8:receive_data	24	static

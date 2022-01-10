@@ -27,23 +27,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000029  00000000  00000000  0002001c  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00005b71  00000000  00000000  00020045  2**0
+ 12 .debug_info   00005bf1  00000000  00000000  00020045  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 0000139f  00000000  00000000  00025bb6  2**0
+ 13 .debug_abbrev 0000138a  00000000  00000000  00025c36  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000630  00000000  00000000  00026f58  2**3
+ 14 .debug_aranges 00000648  00000000  00000000  00026fc0  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_ranges 00000588  00000000  00000000  00027588  2**3
+ 15 .debug_ranges 000005a0  00000000  00000000  00027608  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00015f99  00000000  00000000  00027b10  2**0
+ 16 .debug_macro  00015f99  00000000  00000000  00027ba8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   000069c7  00000000  00000000  0003daa9  2**0
+ 17 .debug_line   00006a62  00000000  00000000  0003db41  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0007dabf  00000000  00000000  00044470  2**0
+ 18 .debug_str    0007daf4  00000000  00000000  000445a3  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000053  00000000  00000000  000c1f2f  2**0
+ 19 .comment      00000053  00000000  00000000  000c2097  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00001754  00000000  00000000  000c1f84  2**2
+ 20 .debug_frame  000017c0  00000000  00000000  000c20ec  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -742,19 +742,19 @@ void init_device(){
 08000524 <enable_txmode>:
 
 // setting up the txmode
-void enable_txmode(uint8_t *Address, uint8_t *channel){
+void enable_txmode(uint8_t *Address, uint8_t channel){
  8000524:	b580      	push	{r7, lr}
  8000526:	b084      	sub	sp, #16
  8000528:	af00      	add	r7, sp, #0
  800052a:	6078      	str	r0, [r7, #4]
- 800052c:	6039      	str	r1, [r7, #0]
+ 800052c:	460b      	mov	r3, r1
+ 800052e:	70fb      	strb	r3, [r7, #3]
 	//disabling the chip after configuring the device
 	CE_disable();
- 800052e:	f7ff ff43 	bl	80003b8 <CE_disable>
+ 8000530:	f7ff ff42 	bl	80003b8 <CE_disable>
 
 	nrf_reg_single(RF_CH, channel);//select the channel
- 8000532:	683b      	ldr	r3, [r7, #0]
- 8000534:	b2db      	uxtb	r3, r3
+ 8000534:	78fb      	ldrb	r3, [r7, #3]
  8000536:	4619      	mov	r1, r3
  8000538:	2005      	movs	r0, #5
  800053a:	f7ff ff49 	bl	80003d0 <nrf_reg_single>
