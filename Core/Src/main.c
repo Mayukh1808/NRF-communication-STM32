@@ -61,9 +61,9 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t RxAddress[] = {0x00,0xDD,0xCC,0xBB,0xAA};
-uint8_t RxData[32];
-uint8_t data[50];
+uint8_t TxAddress[] = {0x00,0xDD,0xCC,0xBB,0xAA};
+uint8_t TxData[]= "h\n";
+//uint8_t data[50];
 
 /* USER CODE END 0 */
 
@@ -101,8 +101,8 @@ int main(void)
 //  init_device();
 //  enable_txmode(TxAddress, 10);
   NRF24_Init();
-  NRF24_RxMode(RxAddress, 10);
-  NRF24_ReadAll(data);
+  NRF24_TxMode(TxAddress, 10);
+  //NRF24_ReadAll(data);
 
 
   /* USER CODE END 2 */
@@ -114,15 +114,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-//	  if(data_transmit(TXdata) == 1){
-//		  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-//	  }
-//	  HAL_Delay(1000);
-	  if (isDataAvailable(2) == 1)
-		  {
-			  NRF24_Receive(RxData);
-			  HAL_UART_Transmit(&huart2, RxData, strlen((char *)RxData), 1000);
-		  }
+	  if(NRF24_Transmit(TxData) == 1){
+		  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+		  HAL_Delay(1000);
+		  HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+		  HAL_Delay(1000);
+	  }
+
+
   }
   /* USER CODE END 3 */
 }
